@@ -8,6 +8,15 @@ __pycache__/
 .pytest_cache/
 
 # =========================
+# Environnements virtuels Python
+# =========================
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+
+# =========================
 # Secrets WiFi (ne jamais versionner)
 # =========================
 config_wifi.h
@@ -17,7 +26,6 @@ config_network.h
 # FastAPI local config (secrets / urls)
 # =========================
 src/cuve-api/.env
-src/cuve-api/.venv
 .env
 
 # DB locale
