@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Niveau cuve</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 2rem; }
+        .grid { display: grid; gap: 1rem; max-width: 1100px; }
+        .card { padding: 1rem 1.25rem; border: 1px solid #ddd; border-radius: 12px; }
+        .muted { color: #666; }
+        .big { font-size: 2rem; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; margin-top: .5rem; }
+        td, th { border-bottom: 1px solid #eee; padding: .35rem .25rem; text-align: left; font-size: 0.95rem; }
+        .row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .pill { display: inline-block; padding: .2rem .6rem; border-radius: 999px; background: #f3f3f3; }
+        .error { color: #b00020; }
+        .small { font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+<div class="grid">
+    <div class="card">
+        <div class="row" style="justify-content: space-between; align-items: baseline;">
+            <h1 style="margin:0;">Niveau cuve <span style="font-size: 0.45em; font-weight: 400; color: #999;">version du {{ version }}</span></h1>
+            <div class="pill small" id="modePill">mode: ?</div>
+        </div>
+        <div class="muted small" id="tankInfo">Chargement paramètres cuve…</div>
+    </div>
+
+    <div class="card" id="lastCard">
+        <div class="muted">Dernière valeur</div>
+        <div class="big" id="lastBig">Chargement…</div>
+        <div class="muted small" id="lastMeta"></div>
+        <div class="muted small" id="lastAge"></div>
+        <div class="small error" id="lastError" style="display:none;"></div>
+    </div>
+
+    <div class="card" id="dayCard">
+        <div class="muted">Jour</div>
+        <div id="dayTables">Chargement…</div>
+    </div>
+
+    <div class="card" id="weekCard">
+        <div class="muted">Semaine</div>
+        <div id="weekTables">Chargement…</div>
+    </div>
+
+    <div class="card" id="monthCard">
+        <div class="muted">Mois</div>
+        <div id="monthTables">Chargement…</div>
+    </div>
+
+    <div class="card" id="yearCard">
+        <div class="muted">Année</div>
+        <div id="yearTables">Chargement…</div>
+    </div>
+
+    <div class="card" id="allCard">
+        <div class="muted">Depuis toujours</div>
+        <div id="allTables">Chargement…</div>
+    </div>
+</div>
+
+<script>
+    function fmtEpoch(e) {
+        if (!e) return "";
+        const d = new Date(e * 1000);
+        return d.toLocaleString();
+    }
+
+    function fmtLiters(v) {
+        if (v === null || v === undefined) return "?";
+        return `${v} L`;
+    }
+
+    function fmtPercent(p) {
+        if (p === null || p === undefined) return "?";
+        return `${p}%`;
+    }
+
+    function tableHtml(items, title) {
+        if (!items || items.length === 0) {
+            return `<div class="muted small">${title} : aucune donnée</div>`;
+        }
+
+        let rows = items.map(x => `
+        <tr>
+          <td>${x.distance_cm} cm</td>
+          <td>${fmtLiters(x.volume_liters)}</td>
+          <td>${fmtPercent(x.fill_percent)}</td>
+          <td>${x.sensor_timestamp || ""}</td>
+          <td>${fmtEpoch(x.fetched_at_epoch)}</td>
+        </tr>
+      `).join("");
+
+        return `
+        <div style="margin-top:.5rem;"><strong>${title}</strong></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Distance</th>
+              <th>Volume</th>
+              <th>%</th>
+              <th>Timestamp capteur</th>
+              <th>Collecté</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function setTables(period, ex) {
+        const el = document.getElementById(`${period}Tables`);
+        el.innerHTML = tableHtml(ex.max, "5 mesures maxi") + tableHtml(ex.min, "5 mesures mini");
+    }
+
+    async function refresh() {
+        const lastError = document.getElementById("lastError");
+        lastError.style.display = "none";
+        lastError.textContent = "";
+
+        let resp;
+        let data;
+
+        try {
+            resp = await fetch("/api/dashboard?n=5", { cache: "no-store" });
+            data = await resp.json();
+        } catch (e) {
+            document.getElementById("lastBig").textContent = "Erreur";
+            document.getElementById("lastMeta").textContent = "";
+            document.getElementById("lastAge").textContent = "";
+            lastError.style.display = "block";
+            lastError.textContent = `Impossible de charger /api/dashboard : ${e}`;
+            return;
+        }
+
+        // Tank params
+        if (data.tank) {
+            const t = data.tank;
+            document.getElementById("tankInfo").textContent =
+                `Cuve: ${t.total_liters} L — diamètre: ${t.diameter_cm} cm — longueur: ${t.length_cm} cm — marge air pleine: ${t.full_air_gap_cm} cm`;
+        } else {
+            document.getElementById("tankInfo").textContent = "Paramètres cuve indisponibles";
+        }
+
+        // Mode
+        const mode = (data.last && data.last.mode) ? data.last.mode : (data.mode || "unknown");
+        // On a "mode" dans /health, pas dans /dashboard, donc on laisse simple :
+        document.getElementById("modePill").textContent = `mode: ${mode}`;
+
+        // Last
+        if (!data.has_data || !data.last) {
+            document.getElementById("lastBig").textContent = "Pas encore de données";
+            document.getElementById("lastMeta").textContent = "Le collecteur tourne, en attente d'une première mesure…";
+            document.getElementById("lastAge").textContent = "";
+        } else {
+            const last = data.last;
+            document.getElementById("lastBig").textContent =
+                `${last.distance_cm} cm — ${fmtLiters(last.volume_liters)} (${fmtPercent(last.fill_percent)})`;
+
+            document.getElementById("lastMeta").textContent =
+                `capteur: ${last.sensor_timestamp} | ip: ${last.sensor_ip} | collecté: ${fmtEpoch(last.fetched_at_epoch)}`;
+
+            document.getElementById("lastAge").textContent =
+                `âge: ${last.age_seconds}s`;
+        }
+
+        // Extremes tables
+        const ex = data.extremes || {};
+        setTables("day", ex.day || {max: [], min: []});
+        setTables("week", ex.week || {max: [], min: []});
+        setTables("month", ex.month || {max: [], min: []});
+        setTables("year", ex.year || {max: [], min: []});
+        setTables("all", ex.all || {max: [], min: []});
+    }
+
+    refresh().catch(console.error);
+    setInterval(() => refresh().catch(console.error), 60_000); // refresh toutes les 60s
+</script>
+</body>
+</html>

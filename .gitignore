@@ -1,0 +1,77 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# =========================
+# Secrets WiFi (ne jamais versionner)
+# =========================
+config_wifi.h
+config_network.h
+
+# =========================
+# FastAPI local config (secrets / urls)
+# =========================
+src/cuve-api/.env
+src/cuve-api/.venv
+.env
+
+# DB locale
+src/cuve-api/cuve.sqlite3
+*.sqlite3
+
+# =========================
+# Arduino / ESP8266
+# =========================
+
+# Dossier de build Arduino (IDE 1.x et 2.x)
+build/
+build-*/
+
+# Fichiers temporaires Arduino
+*.tmp
+*.bak
+*.old
+
+# Fichiers de sauvegarde automatiques
+*.autosave
+
+# =========================
+# IDEs
+# =========================
+
+# IntelliJ / JetBrains
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.cproject
+.settings/
+
+# =========================
+# OS
+# =========================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# =========================
+# Logs éventuels
+# =========================
+*.log
