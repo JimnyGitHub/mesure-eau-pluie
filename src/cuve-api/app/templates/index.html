@@ -37,27 +37,27 @@
     </div>
 
     <div class="card" id="dayCard">
-        <div class="muted">Jour</div>
+        <div class="big">Jour</div>
         <div id="dayTables">Chargement…</div>
     </div>
 
     <div class="card" id="weekCard">
-        <div class="muted">Semaine</div>
+        <div class="big">Semaine</div>
         <div id="weekTables">Chargement…</div>
     </div>
 
     <div class="card" id="monthCard">
-        <div class="muted">Mois</div>
+        <div class="big">Mois</div>
         <div id="monthTables">Chargement…</div>
     </div>
 
     <div class="card" id="yearCard">
-        <div class="muted">Année</div>
+        <div class="big">Année</div>
         <div id="yearTables">Chargement…</div>
     </div>
 
     <div class="card" id="allCard">
-        <div class="muted">Depuis toujours</div>
+        <div class="big">Depuis toujours</div>
         <div id="allTables">Chargement…</div>
     </div>
 </div>
@@ -113,7 +113,7 @@
 
     function setTables(period, ex) {
         const el = document.getElementById(`${period}Tables`);
-        el.innerHTML = tableHtml(ex.max, "5 mesures maxi") + tableHtml(ex.min, "5 mesures mini");
+        el.innerHTML = tableHtml(ex.max, "dernières hauteur d'eau mini") + tableHtml(ex.min, "dernières hauteur d'eau maxi");
     }
 
     async function refresh() {

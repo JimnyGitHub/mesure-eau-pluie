@@ -16,6 +16,8 @@ Backend Python qui :
 
 ## Installation
 
+### Linux/macOS
+
 ```bash
 cd src/cuve-api
 
@@ -28,6 +30,23 @@ pip install -r requirements.txt
 
 # Configurer l'environnement
 cp .env.example .env
+# Éditer .env avec vos paramètres
+```
+
+### Windows (PowerShell)
+
+```powershell
+cd src/cuve-api
+
+# Créer un environnement virtuel (recommandé)
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Configurer l'environnement
+Copy-Item .env.example .env
 # Éditer .env avec vos paramètres
 ```
 
@@ -50,6 +69,8 @@ cp .env.example .env
 
 ### Lancer le serveur
 
+#### Linux/macOS
+
 ```bash
 cd src/cuve-api
 
@@ -58,6 +79,18 @@ uvicorn app.main:app --reload
 
 # Mode simulation (sans capteur)
 CUVE_MODE=sim uvicorn app.main:app --reload
+```
+
+#### Windows (PowerShell)
+
+```powershell
+cd src/cuve-api
+
+# Mode réel (avec capteur)
+uvicorn app.main:app --reload
+
+# Mode simulation (sans capteur)
+$env:CUVE_MODE="sim"; uvicorn app.main:app --reload
 ```
 
 Le dashboard web est accessible sur http://localhost:8000
@@ -75,13 +108,30 @@ Le dashboard web est accessible sur http://localhost:8000
 
 Pour vérifier la connectivité avec le capteur :
 
+#### Linux/macOS
+
 ```bash
+python monitor_cuve.py
+```
+
+#### Windows (PowerShell)
+
+```powershell
 python monitor_cuve.py
 ```
 
 ## Tests
 
+### Linux/macOS
+
 ```bash
+cd src/cuve-api
+pytest
+```
+
+### Windows (PowerShell)
+
+```powershell
 cd src/cuve-api
 pytest
 ```
