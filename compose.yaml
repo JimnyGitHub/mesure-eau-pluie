@@ -1,0 +1,13 @@
+services:
+  cuve-api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # On stocke la DB hors code, persistant côté host
+      - ./_data:/data
+    environment:
+      # On force la DB dans /data dans le conteneur
+      - CUVE_DB_PATH=/data/cuve.sqlite3

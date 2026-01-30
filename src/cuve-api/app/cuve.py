@@ -1,5 +1,6 @@
 import time
 import random
+import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, Any
 
@@ -11,6 +12,8 @@ class CuveReading:
     timestamp: str
     ip: str
     fetched_at_epoch: float
+
+logger = logging.getLogger(__name__)
 
 class CuveClient:
     async def get_reading(self, force_refresh: bool = False) -> CuveReading:
@@ -30,7 +33,9 @@ class RealCuveClient(CuveClient):
 
     async def get_reading(self, force_refresh: bool = False) -> CuveReading:
         if (not force_refresh) and self._cache_valid():
-            return self._cache
+            cached = self._cache
+            if cached is not None:
+                return cached
 
         async with httpx.AsyncClient(timeout=self.http_timeout_seconds) as client:
             resp = await client.get(self.sensor_url)
@@ -40,6 +45,13 @@ class RealCuveClient(CuveClient):
         distance_cm = int(data.get("distance_cm", -1))
         timestamp = str(data.get("timestamp", ""))
         ip = str(data.get("ip", ""))
+
+        if distance_cm < 0 or not timestamp:
+            logger.warning(
+                "Lecture capteur invalide (distance_cm=%s, timestamp=%s)",
+                distance_cm,
+                timestamp,
+            )
 
         reading = CuveReading(
             distance_cm=distance_cm,
