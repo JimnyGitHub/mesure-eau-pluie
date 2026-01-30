@@ -83,3 +83,46 @@ Desktop.ini
 # Logs éventuels
 # =========================
 *.log
+
+# =========================
+# LLM / AI Assistants
+# =========================
+
+# Claude Code
+.claude/
+
+# Cursor
+.cursor/
+.cursorignore
+.cursorindexingignore
+
+# GitHub Copilot
+.copilot/
+
+# Aider
+.aider*
+.aider.chat.history.md
+.aider.input.history
+.aider.tags.cache.v3/
+
+# Codeium
+.codeium/
+
+# Continue.dev
+.continue/
+
+# Amazon CodeWhisperer / Q
+.aws/amazonq/
+
+# Tabnine
+.tabnine/
+
+# Windsurf
+.windsurf/
+
+# Cody (Sourcegraph)
+.cody/
+
+# Autres fichiers de contexte LLM
+CLAUDE.local.md
+.llm-context/
