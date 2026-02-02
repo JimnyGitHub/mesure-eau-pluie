@@ -90,6 +90,8 @@ Desktop.ini
 
 # Claude Code
 .claude/
+!.claude/skills/
+!.claude/skills/**
 
 # Cursor
 .cursor/
