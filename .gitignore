@@ -32,6 +32,9 @@ src/cuve-api/.env
 src/cuve-api/cuve.sqlite3
 *.sqlite3
 
+# Wheels pre-téléchargés (générés par start.sh/ps1/bat, ne pas versionner)
+src/cuve-api/wheels/*.whl
+
 # =========================
 # Arduino / ESP8266
 # =========================

@@ -1,0 +1,10 @@
+.venv
+.venv-linux
+__pycache__
+*.pyc
+*.pyo
+*.sqlite3
+.env
+tests/
+pytest.ini
+monitor_cuve.py
