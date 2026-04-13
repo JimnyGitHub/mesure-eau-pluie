@@ -62,6 +62,9 @@ build-*/
 # VS Code
 .vscode/
 
+# Claude
+.claude/
+
 # Eclipse
 .project
 .cproject

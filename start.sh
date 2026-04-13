@@ -13,7 +13,7 @@ ENV_FILE="src/cuve-api/.env"
 # Si vous avez un proxy local, les dépendances pip sont téléchargées sur l'hôte
 # (où le proxy fonctionne) puis installées en mode offline dans le conteneur.
 # Laisser vide si pas de proxy (ex: VM Proxmox avec accès internet direct).
-PROXY_PORT="8888"
+#PROXY_PORT="8888"
 # PROXY_PORT=""  # décommenter pour désactiver (install PyPI directe dans le build)
 
 # --- Vérification du .env ---
